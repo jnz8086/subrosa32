@@ -3,7 +3,7 @@ These [Cheat Engine](http://cheatengine.org/) table files are for Sub Rosa alpha
 
 Work in progress.
 
-= Server notes
+# Server notes
 
 This time team spawns and extended commands are a single script called "SRU mod".
 
@@ -33,10 +33,10 @@ and includes following custom admin commands:
  /ready    - force ready up everyone
 ```
 
-= Client notes
+# Client notes
 
 
-= IDs
+# IDs
 
 ```
 
