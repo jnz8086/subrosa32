@@ -1,0 +1,1060 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="27">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>52</ID>
+      <Description>"--------"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>0</ID>
+          <Description>"game mode"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+93575A8</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>49</ID>
+          <Description>"game state"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+93575C0</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>50</ID>
+          <Description>"timer"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+93575C4</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>53</ID>
+      <Description>"---- commands -----"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>22</ID>
+          <Description>"/heli id"</Description>
+          <ShowAsHex>1</ShowAsHex>
+          <VariableType>Byte</VariableType>
+          <Address>subrosa.exe+ABAC0</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>23</ID>
+          <Description>"/heli color"</Description>
+          <VariableType>Byte</VariableType>
+          <Address>subrosa.exe+ABA7C</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>24</ID>
+          <Description>"/arm id"</Description>
+          <ShowAsHex>1</ShowAsHex>
+          <VariableType>Byte</VariableType>
+          <Address>subrosa.exe+ABE25</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>43</ID>
+          <Description>"/arm mags"</Description>
+          <VariableType>Byte</VariableType>
+          <Address>subrosa.exe+ABE23</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>55</ID>
+      <Description>"---- -------"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>17</ID>
+          <Description>"gravity"</Description>
+          <VariableType>Float</VariableType>
+          <Address>subrosa.exe+11A414</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>20</ID>
+          <Description>"disable traffic"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+subrosa.exe+C130A:
+db 90  90 90 90 90
+ 
+[DISABLE]
+
+subrosa.exe+C130A:
+call subrosa.exe+8D730
+
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>31</ID>
+      <Description>"---- machinima (mode 6)"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>30</ID>
+          <Description>"fixed skins"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+//define(offset,#5)
+
+define(max_players,#64)
+define(max_humans,#64)
+
+define(p0,subrosa.exe+12E38680)
+define(ps,3814)
+define(p_team,70)
+define(p_cash,48)
+
+define(h0,subrosa.exe+5B4008)
+define(hs,3518)
+define(h_p,8)
+define(h_skin,34A4)
+
+alloc(mycode,2048)
+mycode:
+
+{
+push #2340953
+call msvcrt.srand
+add esp,4
+}
+
+mov ecx,max_humans
+xor ebx,ebx
+label(loop_players)
+loop_players:
+
+cmp [h0+ebx],0
+je players_next
+
+  pushad
+mov edx,[h0+h_p+ebx]
+imul edx,#12738
+push edx
+call msvcrt.srand
+add esp,4
+  popad
+
+  pushad
+  call msvcrt.rand
+  mov [esp+1C],eax
+  popad
+and eax,1
+mov [h0+h_skin+ebx],eax
+  pushad
+  call msvcrt.rand
+  mov [esp+1C],eax
+  popad
+and eax,3
+mov [h0+h_skin+4+ebx],eax
+label(skin_color)
+skin_color:
+  pushad
+  call msvcrt.rand
+  mov [esp+1C],eax
+  popad
+and eax,7
+cmp eax,5
+jg skin_color
+mov [h0+h_skin+8+ebx],eax
+  pushad
+  call msvcrt.rand
+  mov [esp+1C],eax
+  popad
+and eax,7
+mov [h0+h_skin+C+ebx],eax
+label(eye_color)
+eye_color:
+  pushad
+  call msvcrt.rand
+  mov [esp+1C],eax
+  popad
+and eax,7
+cmp eax,6
+jg eye_color
+mov [h0+h_skin+10+ebx],eax
+  pushad
+  call msvcrt.rand
+  mov [esp+1C],eax
+  popad
+and eax,7
+mov [h0+h_skin+14+ebx],eax
+
+
+
+
+label(players_next)
+players_next:
+add ebx,hs
+//loop loop_players
+  dec ecx
+  cmp ecx,0
+  jge loop_players
+
+ret
+
+createThread(mycode)
+
+[DISABLE]
+
+dealloc(mycode)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>16</Key>
+                <Key>113</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>29</ID>
+          <Description>"fix1 no random gun"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+
+subrosa.exe+DA6BB:
+db  90  90 90 90 90
+
+subrosa.exe+DA6E3:
+db  90  90 90 90 90
+
+subrosa.exe+DA703:
+db  90  90 90 90 90
+
+subrosa.exe+DA726:
+db  90  90 90 90 90
+
+subrosa.exe+DA746:
+db  90  90 90 90 90
+
+subrosa.exe+DA769:
+db  90  90 90 90 90
+ 
+[DISABLE]
+
+
+subrosa.exe+DA6BB:
+call subrosa.exe+8DB80
+
+subrosa.exe+DA6E3:
+call subrosa.exe+3F9F0
+
+subrosa.exe+DA703:
+call subrosa.exe+3F9F0
+
+subrosa.exe+DA726:
+call subrosa.exe+3F9F0
+
+subrosa.exe+DA746:
+call subrosa.exe+3F9F0
+
+subrosa.exe+DA769:
+call subrosa.exe+3F9F0
+
+
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>25</ID>
+          <Description>"disable bots"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+define(max_players,#64)
+define(max_humans,#64)
+
+define(p0,subrosa.exe+12E38680)
+define(ps,3814)
+define(p_team,70)
+define(p_cash,48) //bots have 50000
+
+define(h0,subrosa.exe+5B4008)
+define(hs,3518)
+define(h_p,8)
+
+alloc(mycode,2048)
+mycode:
+
+mov ecx,max_players
+xor ebx,ebx
+label(loop_players)
+loop_players:
+
+cmp [p0+ebx],0
+je players_next
+
+//cmp [p0+p_team+ebx],6
+//jne players_next
+cmp [p0+p_cash+ebx],#50000
+jne players_next
+
+mov [p0+ebx],0
+
+
+label(players_next)
+players_next:
+add ebx,ps
+loop loop_players
+
+
+ret
+
+createThread(mycode)
+
+[DISABLE]
+
+dealloc(mycode)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>17</Key>
+                <Key>117</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>26</ID>
+          <Description>"enable bots"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+define(max_players,#64)
+define(max_humans,#64)
+
+define(p0,subrosa.exe+12E38680)
+define(ps,3814)
+define(p_team,70)
+define(p_cash,48)
+
+define(h0,subrosa.exe+5B4008)
+define(hs,3518)
+define(h_p,8)
+
+alloc(mycode,2048)
+mycode:
+
+mov ecx,max_humans
+xor ebx,ebx
+label(loop_players)
+loop_players:
+
+cmp [h0+ebx],0
+je players_next
+
+mov eax,[h0+h_p+ebx]
+imul eax,ps
+//cmp [p0+p_team+eax],6
+cmp [p0+p_cash+eax],#50000
+jne players_next
+
+mov [p0+eax],1
+
+label(players_next)
+players_next:
+add ebx,hs
+loop loop_players
+
+
+ret
+
+createThread(mycode)
+
+[DISABLE]
+
+dealloc(mycode)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>16</Key>
+                <Key>117</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>28</ID>
+          <Description>"machinima assist (params inside)"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+define(player_x,1480.0)
+define(player_y,50.0)
+define(player_z,1525.0)
+
+define(gold_x,1480.0)
+define(gold_y,50.0)
+define(gold_z,1525.0)
+
+define(mons_x,1082.0)
+define(mons_y,30.0)
+define(mons_z,1027.0)
+
+define(oxs_x,1480.0)
+define(oxs_y,50.0)
+define(oxs_z,1525.0)
+
+
+define(amount_gold,#0)
+define(amount_mons,#0)
+define(amount_oxs,#3)
+
+define(skip_gold,0)
+define(skip_mons,0)
+define(skip_oxs,0)
+
+
+//----------------------------------------
+
+
+define(p0,subrosa.exe+12E38680)
+define(ps,3814)
+define(p_team,70)
+define(p_suit_color,37A4)
+
+
+
+
+
+alloc(mydata,1024)
+define(spawned,mydata+10)
+
+
+define(player_sync_func,subrosa.exe+13B20)
+
+
+//--------
+
+subrosa.exe+CF298:
+db 90  90  90 90 90 90  90 90 90 90
+//mov [ebx+subrosa.exe+12E386F4],3C
+
+subrosa.exe+CF305:
+db 90  90  90 90 90 90  90 90 90 90
+//mov [ebx+subrosa.exe+12E386F4],0000003C { 60 }
+
+subrosa.exe+D94B3:
+mov [esi+subrosa.exe+5B4038],#10000000
+//mov [esi+subrosa.exe+5B4038],00000E10 { 3600 }
+
+
+//item timer
+subrosa.exe+BA1CF:
+db 90 90  90 90 90 90
+//dec [esi+subrosa.exe+9F86FD4]
+
+subrosa.exe+B9E34:
+db 90 90
+//mov [esi],eax
+
+
+subrosa.exe+E091F:
+db 90 90  90 90 90 90
+
+
+
+//-------  reset --------
+
+alloc(newmem11,2048)
+label(returnhere11)
+label(originalcode11)
+label(exit11)
+
+newmem11:
+
+pushad
+
+mov [spawned],0
+mov [spawned+4],0
+mov [spawned+8],0
+mov [spawned+C],0
+
+popad
+
+
+originalcode11:
+sub esp,50
+mov eax,[subrosa.exe+132860]
+
+exit11:
+jmp returnhere11
+
+"subrosa.exe"+D36F0:
+jmp newmem11
+nop
+nop
+nop
+returnhere11:
+
+
+
+
+//---- player spawn
+
+alloc(newmem2,2048)
+label(returnhere2)
+label(originalcode2)
+label(exit2)
+
+newmem2:
+
+mov [edx+0],(float)player_x
+mov [edx+4],(float)player_y
+mov [edx+8],(float)player_z
+
+{
+//parking lot
+mov [edx+0],(float)1561.0
+mov [edx+4],(float)65.0
+mov [edx+8],(float)1490.0
+}
+{
+//goldmen
+mov [edx+0],(float)1081.0
+mov [edx+4],(float)30.0
+mov [edx+8],(float)1027.0
+}
+
+fadd [esp+8]
+
+originalcode2:
+call subrosa.exe+CC570
+
+exit2:
+jmp returnhere2
+
+"subrosa.exe"+DA671:
+jmp newmem2
+returnhere2:
+
+
+//--- bot spawn
+
+alloc(newmem,2048)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem:
+
+pushad
+
+
+mov ebp,[esp+20]
+
+
+cmp [spawned+4],amount_gold
+jge spawn_mons
+
+mov [ebp+0],(float)gold_x
+mov [ebp+4],(float)gold_y
+mov [ebp+8],(float)gold_z
+
+mov [p0+p_team+esi],0
+inc [spawned+4]
+inc [spawned]
+       mov eax,skip_gold
+       cmp eax,1
+       je dont_spawn
+jmp spawn_ret
+label(spawn_mons)
+spawn_mons:
+cmp [spawned+8],amount_mons
+jge spawn_oxs
+
+mov [ebp+0],(float)mons_x
+mov [ebp+4],(float)mons_y
+mov [ebp+8],(float)mons_z
+
+mov [p0+p_team+esi],1
+inc [spawned+8]
+inc [spawned]
+       mov eax,skip_mons
+       cmp eax,1
+       je dont_spawn
+jmp spawn_ret
+label(spawn_oxs)
+spawn_oxs:
+cmp [spawned+C],amount_oxs
+jge dont_spawn
+
+mov [ebp+0],(float)oxs_x
+mov [ebp+4],(float)oxs_y
+mov [ebp+8],(float)oxs_z
+
+mov [p0+p_team+esi],2
+inc [spawned+C]
+inc [spawned]
+       mov eax,skip_oxs
+       cmp eax,1
+       je dont_spawn
+
+label(spawn_ret)
+spawn_ret:
+
+push edi
+fild [esp]
+fadd [ebp+0]
+fstp [ebp+0]
+  mov edi,[p0+p_team+esi]
+  mov [p0+p_suit_color+esi],edi
+pop edi
+
+
+//popad
+//pushad
+push edi
+call player_sync_func
+add esp,4
+popad
+call subrosa.exe+CC570
+jmp exit
+
+label(dont_spawn)
+dont_spawn:
+popad
+mov eax,-1
+
+originalcode:
+//call subrosa.exe+CC570
+
+exit:
+jmp returnhere
+
+"subrosa.exe"+D2382:
+jmp newmem
+returnhere:
+
+
+
+subrosa.exe+D23B6:
+db  90  90 90 90 90
+
+subrosa.exe+D24B9:
+db  90  90 90 90 90
+
+subrosa.exe+D25BC:
+db  90  90 90 90 90
+
+subrosa.exe+D26D1:
+db  90  90 90 90 90
+
+
+
+
+
+ 
+[DISABLE]
+dealloc(newmem11)
+"subrosa.exe"+D36F0:
+sub esp,50
+mov eax,[subrosa.exe+132860]
+//Alt: db 83 EC 50 A1 60 28 2C 00
+dealloc(newmem6)
+"subrosa.exe"+DF6F9:
+call subrosa.exe+D36F0
+//Alt: db E8 F2 3F FF FF
+dealloc(newmem2)
+"subrosa.exe"+DA671:
+call subrosa.exe+CC570
+//Alt: db E8 FA 1E FF FF
+
+
+subrosa.exe+E091F:
+fst dword ptr [subrosa.exe+935763C] { [7.19] }
+
+dealloc(newmem)
+"subrosa.exe"+D2382:
+call subrosa.exe+CC570
+//Alt: db E8 E9 A1 FF FF
+
+subrosa.exe+D23B6:
+call subrosa.exe+3F9F0
+subrosa.exe+D24B9:
+call subrosa.exe+3F9F0
+subrosa.exe+D25BC:
+call subrosa.exe+3F9F0
+subrosa.exe+D26D1:
+call subrosa.exe+3F9F0
+
+
+
+dealloc(mydata)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>21</ID>
+          <Description>"local human"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+12E38680+3814*0+84</Address>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Decrease Value</Action>
+              <Keys>
+                <Key>113</Key>
+              </Keys>
+              <Value>1</Value>
+              <ID>0</ID>
+            </Hotkey>
+            <Hotkey>
+              <Action>Increase Value</Action>
+              <Keys>
+                <Key>114</Key>
+              </Keys>
+              <Value>1</Value>
+              <ID>1</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>51</ID>
+          <Description>"time of day"</Description>
+          <VariableType>Float</VariableType>
+          <Address>subrosa.exe+935763C</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>7</ID>
+      <Description>"------ structs -----"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>8</ID>
+          <Description>"player"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+12E38680+3814*0</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>10</ID>
+          <Description>"vehicle"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+840D040+5C48*0</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>13</ID>
+          <Description>"item type"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+21B2A6E0+D4C*0</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>14</ID>
+          <Description>"human"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+5B4008+3518*0</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>16</ID>
+          <Description>"item"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+9F86FC0+1F4*0</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32</ID>
+          <Description>"vehicle type"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosa.exe+BDAAE60+183A4*0</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>54</ID>
+      <Description>"----- misc -----"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>2</ID>
+          <Description>"F1 performance test"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+
+define(prof0,subrosa.exe+2821E0)
+define(prof_measure,48)
+define(profs,58)
+define(profc,#40)
+
+
+
+define(text_func,subrosa.exe+25F90)
+
+
+
+alloc(tmp_buffer,1024)
+
+alloc(strings,1024)
+strings:
+label(s_test)
+s_test:
+db 't' 'e' 's' 't' 0
+label(s_format)
+s_format:
+db '%' 's' ':' ' ' '%' 'i' 0
+label(s_percent)
+s_percent:
+db '%' 'i' '%' '%' 0
+
+
+
+
+
+
+alloc(newmem,2048)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem:
+pushad
+
+
+{
+push (float)1.0
+push (float)1.0
+push (float)1.0
+push (float)1.0
+push #32
+push (float)16.0
+push (float)64.0
+push (float)16.0
+push s_test
+call text_func
+add esp,24
+}
+
+
+push 0
+
+
+mov ecx,profc
+xor ebx,ebx
+label(prof_loop_total)
+prof_loop_total:
+
+mov edx,[prof0+prof_measure+ebx]
+add [esp],edx
+
+add ebx,profs
+loop prof_loop_total
+
+
+
+
+mov ecx,profc
+xor ebx,ebx
+label(prof_loop)
+prof_loop:
+  push ebx
+  push ecx
+
+
+lea edx,[prof0+ebx]
+push [prof_measure+edx]
+push edx
+push s_format
+push tmp_buffer
+call msvcrt.sprintf
+add esp,10
+
+
+push (float)1.0
+push (float)1.0
+push (float)1.0
+push (float)1.0
+push #32
+push (float)13.0
+push (float)13.0
+  fld [esp]
+  fimul [esp+1C]
+  fadd [esp]
+  fstp [esp]
+push (float)16.0
+push tmp_buffer
+call text_func
+//add esp,24
+
+
+mov ebx,[esp+24+4]
+mov edx,[prof0+prof_measure+ebx]
+push edx
+    fild [esp]
+    mov [esp],#100
+    fimul [esp]
+    fidiv [esp+4+24+8]
+    fistp [esp]
+push s_percent
+push tmp_buffer
+call msvcrt.sprintf
+add esp,C
+
+
+
+mov [esp+4],(float)200.0
+call text_func
+add esp,24
+
+
+  pop ecx
+  pop ebx
+add ebx,profs
+//loop prof_loop
+  dec ecx
+  cmp ecx,0
+  jg prof_loop
+
+
+
+
+add esp,4
+popad
+ret
+
+originalcode:
+sub esp,0000020C
+
+exit:
+jmp returnhere
+
+"subrosa.exe"+3A7D0:
+jmp newmem
+nop
+returnhere:
+
+
+
+ 
+[DISABLE]
+dealloc(newmem)
+"subrosa.exe"+3A7D0:
+sub esp,0000020C
+//Alt: db 81 EC 0C 02 00 00
+
+dealloc(tmp_buffer)
+dealloc(strings)
+
+
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>19</ID>
+          <Description>"disable texture filtering w/ F3"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+define(keys,subrosa.exe+29021060)
+define(keys_last,subrosa.exe+8F96060)
+
+define(tex0,subrosa.exe+2F5A402C)
+define(tex_size,70)
+define(tex_cnt,100)
+
+alloc(newmem,2048)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem:
+
+cmp byte ptr [keys+3C],0
+je originalcode
+cmp byte ptr [keys_last+3C],0
+jne originalcode
+
+pushad
+
+mov ecx,tex_cnt
+xor ebx,ebx
+label(tex_loop)
+tex_loop:
+
+push ebx
+push ecx
+
+push 84C0
+call dword ptr [subrosa.exe+400F57B4] { -&gt;atioglxx.dll+1BF98D8 }
+
+push [tex0+ebx]
+push de1
+call dword ptr [subrosa.exe+D109138] { -&gt;OPENGL32.glBindTexture }
+
+push (float)0.0
+push 84fe
+push de1
+call dword ptr [subrosa.exe+D109120] { -&gt;OPENGL32.glTexParameterf }
+
+pop ecx
+pop ebx
+
+add ebx,tex_size
+loop tex_loop
+
+popad
+
+originalcode:
+nop 
+pushad 
+lea ebx,[subrosa.exe+1A41319C]
+
+exit:
+jmp returnhere
+
+"subrosa.exe"+7C180:
+jmp newmem
+nop
+nop
+nop
+returnhere:
+
+
+
+ 
+[DISABLE]
+dealloc(newmem)
+"subrosa.exe"+7C180:
+nop 
+pushad 
+lea ebx,[subrosa.exe+1A41319C]
+//Alt: db 90 60 8D 1D 9C 31 5A 1A
+
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"mouse sensitivity"</Description>
+          <VariableType>Double</VariableType>
+          <Address>subrosa.exe+117BC8</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>
