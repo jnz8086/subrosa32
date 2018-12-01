@@ -25,6 +25,12 @@
           <VariableType>4 Bytes</VariableType>
           <Address>subrosadedicated.exe+8FC9740</Address>
         </CheatEntry>
+        <CheatEntry>
+          <ID>21</ID>
+          <Description>"gravity"</Description>
+          <VariableType>Float</VariableType>
+          <Address>subrosadedicated.exe+8541C</Address>
+        </CheatEntry>
       </CheatEntries>
     </CheatEntry>
     <CheatEntry>
@@ -35,7 +41,7 @@
       <CheatEntries>
         <CheatEntry>
           <ID>9</ID>
-          <Description>"==S=R=U== mod (11/24/18)"</Description>
+          <Description>"==S=R=U== mod (12/1/18)"</Description>
           <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>//player
@@ -433,12 +439,45 @@ cmp eax,-1
 jne arm_third_skip
 
 call msvcrt.atoi
+cmp eax,-1
+jne arm_third_skip
+
+  mov ecx,players_max
+  xor ebx,ebx
+  label(arm_third_loop)
+  arm_third_loop:
+     push ebx
+     push ecx
+
+imul eax,ebx,hs
+cmp [h0+ebx],0
+je arm_third_next
+
+mov eax,[esp+2C+8]
+push eax
+mov eax,[esp+2C+8]
+push eax
+push ebx
+call arm_func //(character, weapon, amount of mags)
+add esp,C
+label(arm_third_next)
+arm_third_next:
+     pop ecx
+     pop ebx
+   inc ebx
+  //loop arm_third_loop
+  dec ecx
+  cmp ecx,0
+  jge arm_third_loop
+mov eax,-1
+jmp arm_third_skip2
 
 label(arm_third_skip)
 arm_third_skip:
 imul eax,ps
 mov eax,[p0+p_h+eax]
-//imul eax,hs
+label(arm_third_skip2)
+arm_third_skip2:
 
 mov [esp+20+4],eax
 
@@ -1550,22 +1589,55 @@ mov [ebx+subrosadedicated.exe+11E9F890],esi
 </AssemblerScript>
         </CheatEntry>
         <CheatEntry>
-          <ID>10</ID>
-          <Description>"disable traffic"</Description>
+          <ID>152</ID>
+          <Description>"nerf traffic (config inside)"</Description>
           <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
-          <AssemblerScript>[ENABLE]
+          <AssemblerScript>define(traffic_max,#32)
 
-subrosadedicated.exe+49B00:
-ret
+//-------------------------------------------
+
+[ENABLE]
+
+
+alloc(newmem2,2048)
+label(returnhere2)
+label(originalcode2)
+label(exit2)
+
+newmem2:
+
+mov [esp+4],traffic_max
+
+originalcode2:
+sub esp,0C
+cmp dword ptr [subrosadedicated.exe+11796D4C],00
+
+exit2:
+jmp returnhere2
+
+"subrosadedicated.exe"+6D740:
+jmp newmem2
 nop
 nop
+nop
+nop
+nop
+returnhere2:
+
+
+
+
+
+
  
 [DISABLE]
+dealloc(newmem2)
+"subrosadedicated.exe"+6D740:
+sub esp,0C
+cmp dword ptr [subrosadedicated.exe+11796D4C],00
+//Alt: db 83 EC 0C 83 3D 4C 6D B1 11 00
 
-
-subrosadedicated.exe+49B00:
-sub esp,48
 
 
 </AssemblerScript>
@@ -1575,6 +1647,290 @@ sub esp,48
           <Description>"max players"</Description>
           <VariableType>4 Bytes</VariableType>
           <Address>subrosadedicated.exe+8C0AD68</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>154</ID>
+      <Description>"---- grenades fun ------"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>24</ID>
+          <Description>"grenade launcher (config inside)"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+
+
+
+define(infinite_ammo,1)
+
+//which gun is the grenade launcher:
+  //define(grenade_launcher_weapon,2) //9mm, mp5
+  //define(grenade_launcher_weapon,3) //magnum
+  define(grenade_launcher_weapon,1) //m16
+  //define(grenade_launcher_weapon,0) //ak
+
+//projectile velocity:     (affected by weapon type!)
+  define(grenade_speed,0.02)
+  //define(grenade_speed,0.04)
+
+//explosion or despawn timer:
+  define(grenade_timer,#120)
+//  define(grenade_timer,#30)
+
+//projectile type:
+  define(grenade_type,D) //grenade
+  //define(grenade_type,22) //football
+
+
+
+//-----------------------------------------------------------------
+
+
+alloc(mydata,2048) //connects player to item
+
+define(i0,subrosadedicated.exe+8FF8620)
+define(is,1F4)
+define(i_type,C)
+define(i_despawn,14)
+define(i_timer,E4)
+define(i_ammo,EC)
+define(i__denial,1EC)
+define(i__owner,1E8)
+
+define(vehicle_spawn_func,subrosadedicated.exe+46E00)
+               //(type, *float[3] position, 0, *float[9] orientation, color)
+
+define(item_spawn_func,subrosadedicated.exe+20830)
+               //(int item_type, float *pos, [float* velocity], float *orientation)
+
+
+
+alloc(mycode,2048)
+mycode:
+
+mov ecx,#64
+xor ebx,ebx
+label(init_loop)
+init_loop:
+//  mov [mydata+ecx*4],-1
+  mov [mydata+ebx],-1
+add ebx,4
+loop init_loop
+
+ret
+createThread(mycode)
+
+
+
+alloc(newmem,2048)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //sub_418910(int a1, float *a2, float *a3, int a4)
+
+cmp [esp+4],grenade_launcher_weapon    //9mm
+jne originalcode
+
+pushad
+
+mov [i0+i__denial+esi],1
+
+mov eax,infinite_ammo
+cmp eax,1
+jne shot_not_infinite
+
+  inc [i0+i_ammo+esi]
+
+label(shot_not_infinite)
+shot_not_infinite:
+
+
+mov esi,[esp+20+4+4] //*pos
+mov edi,[esp+20+4+8] //*velocity
+mov ebp,[esp+20+4+C] //player
+
+mov eax,[mydata+ebp*4]
+cmp eax,-1
+je shot_table_skip
+imul eax,is
+   cmp [i0+i_type+eax],grenade_type
+   jne shot_table_skip
+  cmp [i0+i__owner+eax],ebp
+  jne shot_table_skip
+cmp [i0+eax],0
+jne shot_ret
+label(shot_table_skip)
+shot_table_skip:
+
+push (float)grenade_speed
+sub esp,C
+  fld [edi+0]
+  fmul [esp+C]
+  fstp [esp+0]
+    fld [edi+4]
+    fmul [esp+C]
+    fstp [esp+4]
+  fld [edi+8]
+  fmul [esp+C]
+  fstp [esp+8]
+mov ebx,esp //*velocity_new
+
+push (float)0.0
+push (float)0.0
+push (float)1.0
+  push (float)0.0
+  push (float)1.0
+  push (float)0.0
+push (float)-1.0
+push (float)0.0
+push (float)0.0
+mov edx,esp //*orientation
+
+
+push edx
+//push edi
+push ebx
+push esi
+push grenade_type
+call item_spawn_func
+add esp,44 //10+24+10
+
+cmp eax,-1
+je shot_ret
+
+mov ebx,[esp+4] //esi
+imul ebx,is
+mov [i0+i__denial+ebx],0
+
+mov ebp,[esp+20+4+C]
+mov [mydata+ebp*4],eax
+
+imul eax,is
+mov [i0+i__owner+eax],ebp
+mov [i0+i_ammo+eax],0
+mov [i0+i_timer+eax],grenade_timer
+
+mov ebx,grenade_type
+cmp ebx,D
+je shot_ret
+
+mov [i0+i_despawn+eax],grenade_timer
+
+label(shot_ret)
+shot_ret:
+popad
+
+ret
+
+originalcode:
+push esi
+mov esi,[subrosadedicated.exe+23F277C0]
+
+exit:
+jmp returnhere
+
+"subrosadedicated.exe"+18910:
+jmp newmem
+nop
+nop
+returnhere:
+
+
+
+
+
+alloc(newmem2,2048)
+label(returnhere2)
+label(originalcode2)
+label(exit2)
+
+newmem2:
+
+  cmp [i0+i__denial+esi],0
+  jne exit2
+
+
+originalcode2:
+call subrosadedicated.exe+1AD50
+
+exit2:
+jmp returnhere2
+
+"subrosadedicated.exe"+4309A:
+jmp newmem2
+returnhere2:
+
+
+ 
+ 
+[DISABLE]
+dealloc(newmem2)
+"subrosadedicated.exe"+4309A:
+call subrosadedicated.exe+1AD50
+//Alt: db E8 B1 7C FD FF
+
+
+dealloc(newmem)
+"subrosadedicated.exe"+18910:
+push esi
+mov esi,[subrosadedicated.exe+23F277C0]
+//Alt: db 56 8B 35 C0 77 C0 24
+
+
+dealloc(mydata)
+dealloc(mycode)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>25</ID>
+          <Description>"invincibility to grenades"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+subrosadedicated.exe+20F1F:
+db 90  90  90 90 90 90  90 90 90 90
+ 
+[DISABLE]
+
+subrosadedicated.exe+20F1F:
+mov [edi-0000017C],00000000
+
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>26</ID>
+          <Description>"no fall damage"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+
+subrosadedicated.exe+7C8D7:
+db 90  90  90 90 90 90  90
+
+subrosadedicated.exe+7C96B:
+db 90  90  90 90 90 90
+ 
+ 
+[DISABLE]
+
+
+
+subrosadedicated.exe+7C8D7:
+add dword ptr [esi+subrosadedicated.exe+4BE83C],-78
+
+
+subrosadedicated.exe+7C96B:
+mov [esi+subrosadedicated.exe+4C1AFC],ecx
+
+</AssemblerScript>
         </CheatEntry>
       </CheatEntries>
     </CheatEntry>
@@ -1608,14 +1964,96 @@ sub esp,48
           <VariableType>4 Bytes</VariableType>
           <Address>subrosadedicated.exe+8FF8620+1F4*0</Address>
         </CheatEntry>
+        <CheatEntry>
+          <ID>23</ID>
+          <Description>"bullet"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosadedicated.exe+1926A0+5C*0</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>150</ID>
+          <Description>"item type"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>subrosadedicated.exe+16859F20+D4C*0</Address>
+        </CheatEntry>
       </CheatEntries>
     </CheatEntry>
     <CheatEntry>
-      <ID>11</ID>
-      <Description>"senior person mode"</Description>
-      <LastState/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>[ENABLE]
+      <ID>153</ID>
+      <Description>"-------- misc -------------"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>22</ID>
+          <Description>"jump to shoot"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+
+
+define(p0,subrosadedicated.exe+11E9F820)
+define(ps,3814)
+define(p_h,84)
+
+define(h0,subrosadedicated.exe+4BE808)
+define(hs,3518)
+//define(h_grounded,4C)
+define(h_grounded,50)
+
+define(i0,subrosadedicated.exe+8FF8620)
+define(is,1F4)
+define(i_h,18)
+
+
+alloc(newmem,2048)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem:
+
+push ecx
+mov ecx,[i0+i_h+esi]
+cmp ecx,-1
+je originalcode
+imul ecx,hs
+cmp [h0+h_grounded+ecx],1
+pop ecx
+//jne originalcode
+//xor eax,eax
+//mov eax,1
+jne subrosadedicated.exe+42EF8
+
+originalcode:
+and eax,01
+jne subrosadedicated.exe+42EBB
+
+exit:
+jmp returnhere
+
+"subrosadedicated.exe"+42EB0:
+jmp newmem
+returnhere:
+
+
+ 
+[DISABLE]
+dealloc(newmem)
+"subrosadedicated.exe"+42EB0:
+and eax,01
+jne subrosadedicated.exe+42EBB
+//Alt: db 83 E0 01 75 06
+
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"senior person mode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
 
 
 alloc(newmem,2048)
@@ -1666,6 +2104,193 @@ cmp dword ptr [ecx+subrosadedicated.exe+4C1AD0],32
 
 
 </AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>149</ID>
+          <Description>"ready set go"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+
+
+define(mydata,subrosadedicated.exe+8081000)
+define(mydata2,mydata-200)
+define(allow_shooting,mydata2+0)
+define(disable_engines,mydata2+4)
+
+
+define(delay,#2000)
+
+define(msgfunc,subrosadedicated.exe+6DE0)
+               //(int type, char* message, int channel, int variation)
+
+define(sleep_func,subrosadedicated.exe+84038)
+
+alloc(string_ready,16)
+string_ready:
+db 'R' 'e' 'a' 'd' 'y' '.' '.' '.' 0
+
+alloc(string_set,16)
+string_set:
+db 'S' 'e' 't' '.' '.' '.' 0
+
+alloc(string_go,16)
+string_go:
+db 'G' 'o' '!' '!' '!' 0
+
+
+alloc(mycode,1024)
+mycode:
+
+mov [disable_engines],1
+mov [allow_shooting],0
+
+push 0
+push -1
+push string_ready
+push 0
+call msgfunc
+add esp,10
+
+push delay
+call [sleep_func]
+
+
+push 0
+push -1
+push string_set
+push 0
+call msgfunc
+add esp,10
+
+push delay
+call [sleep_func]
+
+push 0
+push -1
+push string_go
+push 0
+call msgfunc
+add esp,10
+
+
+mov [allow_shooting],1
+mov [disable_engines],0
+
+ret
+
+createThread(mycode)
+
+
+
+
+
+
+
+
+
+
+alloc(newmem,2048)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem:
+
+cmp [disable_engines],1
+je subrosadedicated.exe+766B0
+
+
+originalcode:
+cmp [edi+subrosadedicated.exe+80812E8],esi
+
+exit:
+jmp returnhere
+
+"subrosadedicated.exe"+76697:
+jmp newmem
+nop
+returnhere:
+
+
+
+
+
+
+
+
+
+[DISABLE]
+dealloc(newmem)
+"subrosadedicated.exe"+76697:
+cmp [edi+subrosadedicated.exe+80812E8],esi
+//Alt: db 39 B7 E8 12 D6 08
+
+//dealloc(mycode)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>155</ID>
+          <Description>"void fix"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+alloc(newmem,2048)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem:
+
+   pushad
+
+sub esp,8
+fld [esi+subrosadedicated.exe+4BE9B4]
+fstp qword [esp]
+
+call msvcrt.isnan
+
+add esp,8
+cmp eax,0
+   popad
+je subrosadedicated.exe+7E431
+
+originalcode:
+//jne subrosadedicated.exe+7E431
+mov [esi+subrosadedicated.exe+4BE83C],FFFFFF9C
+
+exit:
+jmp returnhere
+
+"subrosadedicated.exe"+7E425:
+jmp newmem
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+returnhere:
+
+
+
+
+
+ 
+[DISABLE]
+dealloc(newmem)
+"subrosadedicated.exe"+7E425:
+jne subrosadedicated.exe+7E431
+mov [esi+subrosadedicated.exe+4BE83C],FFFFFF9C
+//Alt: db 75 0A C7 86 3C E8 83 00 9C FF FF FF
+
+
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
     </CheatEntry>
   </CheatEntries>
   <UserdefinedSymbols/>
